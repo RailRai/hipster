@@ -17,6 +17,7 @@
 package es.usc.citius.hipster.algorithm;
 
 import es.usc.citius.hipster.model.HeuristicNode;
+import es.usc.citius.hipster.model.Node;
 import es.usc.citius.hipster.model.function.NodeExpander;
 
 import java.util.*;
@@ -45,6 +46,7 @@ public class AStar<A,S,C extends Comparable<C>,N extends HeuristicNode<A,S,C,N>>
 
     protected final N initialNode;
     protected final NodeExpander<A,S,N> expander;
+    protected Map<S, Integer> numberMap = new HashMap<S, Integer>();
 
     /**
      * Default constructor for ADStarForward. Requires the initial state, the successor function to generate
@@ -56,6 +58,17 @@ public class AStar<A,S,C extends Comparable<C>,N extends HeuristicNode<A,S,C,N>>
     public AStar(N initialNode, NodeExpander<A,S,N> expander) {
         this.initialNode = initialNode;
         this.expander = expander;
+    }
+    
+    public int getCountOfShortestPaths(Node goalNode){
+    	int count = 1;
+    	N currentNode = (N) goalNode;
+    	count = numberMap.get(currentNode.state()).intValue() * count;
+    	while(currentNode.pathSize() > 1){
+    		currentNode = currentNode.previousNode();
+    		count = numberMap.get(currentNode.state()).intValue() * count;
+    	}
+    	return count;
     }
 
     @Override
@@ -77,6 +90,7 @@ public class AStar<A,S,C extends Comparable<C>,N extends HeuristicNode<A,S,C,N>>
             queue = new PriorityQueue<N>();
             queue.add(initialNode);
             open.put(initialNode.state(), initialNode);
+            numberMap.put(initialNode.state(), new Integer(1));
         }
 
         /**
@@ -111,10 +125,19 @@ public class AStar<A,S,C extends Comparable<C>,N extends HeuristicNode<A,S,C,N>>
 
             // Analyze the cost of each movement from the current node
             for(N successorNode : expander.expand(current)){
+            	S successorNodeState = successorNode.state();
+            	if(numberMap.get(successorNodeState) == null){
+            		numberMap.put(successorNodeState, new Integer(1));
+            	}
                 N successorOpen = open.get(successorNode.state());
                 if (successorOpen != null) {
                     if (successorOpen.getScore().compareTo(successorNode.getScore()) <= 0) {
                         // Keep analyzing the other movements, discard this movement
+                    	if (successorOpen.getScore().compareTo(successorNode.getScore()) == 0) {
+                    		int currentNumber = numberMap.get(successorNodeState).intValue();
+                    		currentNumber++;
+                    		numberMap.put(successorNodeState, new Integer(currentNumber));
+                    	}
                         continue;
                     }
                 }
@@ -123,6 +146,11 @@ public class AStar<A,S,C extends Comparable<C>,N extends HeuristicNode<A,S,C,N>>
                 if (successorClose != null) {
                     // Check if this path improves the cost of a closed neighbor.
                     if (successorClose.getScore().compareTo(successorNode.getScore()) <= 0) {
+                    	if (successorClose.getScore().compareTo(successorNode.getScore()) == 0) {
+                    		int currentNumber = numberMap.get(successorNodeState).intValue();
+                    		currentNumber++;
+                    		numberMap.put(successorNodeState, new Integer(currentNumber));
+                    	}
                         continue;
                     }
                 }

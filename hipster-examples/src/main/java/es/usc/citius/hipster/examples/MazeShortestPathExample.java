@@ -17,6 +17,8 @@
 package es.usc.citius.hipster.examples;
 
 
+import es.usc.citius.hipster.algorithm.AStar;
+import es.usc.citius.hipster.algorithm.Algorithm.SearchResult;
 import es.usc.citius.hipster.algorithm.Hipster;
 import es.usc.citius.hipster.model.Transition;
 import es.usc.citius.hipster.model.function.CostFunction;
@@ -113,6 +115,11 @@ public class MazeShortestPathExample {
                 .build();
 
         //MazeSearch.printSearch(Hipster.createAStar(p).iterator(), maze);
-        System.out.println(Hipster.createAStar(p).search(goal));
+        AStar algo = Hipster.createAStar(p);
+        SearchResult result = algo.search(goal);
+        int count = algo.getCountOfShortestPaths(result.getGoalNode());
+        System.out.println(result);
+        System.out.println("Count of shortest paths: " + count);
+        //System.out.println(Hipster.createAStar(p).search(goal));
     }
 }

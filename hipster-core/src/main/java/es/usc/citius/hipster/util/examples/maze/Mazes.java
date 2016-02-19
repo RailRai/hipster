@@ -24,6 +24,17 @@ public final class Mazes {
             "    X   ",
             "        ",
             "        "};
+    
+    /**
+     * 6x9 small maze with a shortest path distance of 5.656854249492381
+     */
+    public static String[] testMaze6 = new String[]{
+            "        ",
+            "  XXXXX ",
+            "  S   G ",
+            "  XXXXX ",
+            "        ",
+            "        "};
 
 
     /**
@@ -135,7 +146,8 @@ public final class Mazes {
         MAZE2(new Maze2D(testMaze2),81.69848480983497),
         MAZE3(new Maze2D(testMaze3),15.55634918610405),
         MAZE4(new Maze2D(testMaze4),27.07106781186548),
-        MAZE5(new Maze2D(testMaze5),34.14213562373095);
+        MAZE5(new Maze2D(testMaze5),34.14213562373095),
+        MAZE6(new Maze2D(testMaze6),5.656854249492381);
 
         double minimalPathCost;
         Maze2D maze;
